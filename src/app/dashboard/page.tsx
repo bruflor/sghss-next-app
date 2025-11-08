@@ -1,47 +1,33 @@
 import { auth } from '@/lib/auth';
-import PublicHomepage from "@/components/PublicHomepage";
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
     const session = await auth();
 
     if (!session) {
-        return ;
+        redirect('/login');
     }
 
-    // Dashboard baseado no perfil do usuário
-    switch (session.user.role) {
+    // Redireciona para o dashboard específico baseado no role
+    switch (session.user?.role) {
         case 'admin':
-            return <AdminDashboard />;
+            redirect('/dashboard/admin');
         case 'paciente':
-            return <PacienteDashboard />;
-        default: //profissional de saude
-            return <ProfissionalSaudeDashboard />;
+            redirect('/dashboard/paciente');
+        case 'colaborador':
+            redirect('/dashboard/profissional');
+        default:
+            redirect('/dashboard/paciente'); // fallback
     }
 }
 
-function AdminDashboard() {
+// Componente vazio pois sempre vai redirecionar
+export function DashboardRedirect() {
     return (
-        <div>
-            <h1>Dashboard Administrativo</h1>
-            {/* Métricas gerais, gestão de usuários, etc */}
-        </div>
-    );
-}
-
-function ProfissionalSaudeDashboard() {
-    return (
-        <div>
-            <h1>Dashboard Médico</h1>
-            {/* Agenda, pacientes, consultas, etc */}
-        </div>
-    );
-}
-
-function PacienteDashboard() {
-    return (
-        <div>
-            <h1>Meu Painel</h1>
-            {/* Agendamentos, resultados, prontuário, etc */}
+        <div className="d-flex justify-content-center align-items-center min-vh-100">
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Carregando...</span>
+            </div>
         </div>
     );
 }

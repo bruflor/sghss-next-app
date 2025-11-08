@@ -1,0 +1,38 @@
+@startuml
+
+header
+Requisitos Relacionados: RF001, RF011
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title Caso de Uso: UC-010 - Login e Gestão de Conta
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #E69D07 Paciente as Pac
+actor #0368A7 "Profissional de Saúde" as Prof
+actor #5A96CD "Administrativo/Recepcionista" as Admin
+actor #e4ddc2 "Operador de Laboratório" as Lab
+
+rectangle "Sistema de Gestão de Saúde" {
+    usecase "Login no Sistema" as UC_Login
+    usecase "Criar/Editar Cadastro (RF001/RF011)" as UC_Cad
+}
+
+Pac -- UC_Login
+Pac -- UC_Cad
+
+Prof -- UC_Login
+
+Admin -- UC_Login
+Admin -- UC_Cad
+
+Lab -- UC_Login
+
+UC_Login .> UC_Cad : <<extends>>
+@enduml

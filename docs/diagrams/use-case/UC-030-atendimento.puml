@@ -1,0 +1,46 @@
+@startuml
+
+header
+Caso de Uso: UC-040 - Realizar Atendimento/Teleconsulta
+Requisitos Relacionados: RF006
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title UC-040 - Realizar Atendimento/Teleconsulta (Baseado no Fluxo de Atividades)
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #E69D07 Paciente as Pac
+actor #0368A7 "Profissional de Saúde" as Prof
+
+rectangle "Módulo de Atendimento Clínico" {
+
+    usecase "Iniciar/Acessar Sala de Atendimento" as UC_Acessar
+    usecase "Encerrar Atendimento" as UC_Encerrar
+    usecase "Autorizar Acesso de Usuário" as UC_Acesso
+    usecase "Registrar Log de Sessão" as UC_Log
+    usecase "Gerenciar Prontuário (UC-040)" as UC_Pront
+}
+
+Pac -- UC_Acessar
+
+Prof -- UC_Acessar
+Prof -- UC_Encerrar
+Prof -- UC_Acesso
+
+
+UC_Acessar --> UC_Encerrar : Segue
+
+UC_Acessar .> UC_Acesso : <<include>>
+
+UC_Acessar .> UC_Pront : <<include>>
+
+UC_Encerrar .> UC_Log : <<include>>
+
+UC_Encerrar .> UC_Pront : <<extends>>
+@enduml

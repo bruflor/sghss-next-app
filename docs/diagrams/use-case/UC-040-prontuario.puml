@@ -1,0 +1,47 @@
+@startuml
+
+header
+Requisitos Relacionados: RF004, RF007, RF008
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title Caso de Uso: UC-050 - Gerenciar Prontuário Eletrônico (PEP)
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #E69D07 Paciente as Pac
+actor #0368A7 "Profissional de Saúde" as Prof
+
+rectangle "Módulo de Prontuário Eletrônico" {
+
+    usecase "Visualizar Histórico Clínico (RF004)" as UC_VisPEP
+
+    usecase "Criar Prontuário da Consulta (RF007)" as UC_Criar
+    usecase "Adicionar Adendo (RF007.2)" as UC_Adendo
+
+    usecase "Emitir Receita Digital (RF008.1)" as UC_Receita
+    usecase "Emitir Atestado Digital (RF008.2)" as UC_Atestado
+}
+
+' =====================================================================
+' ASSOCIAÇÕES
+' =====================================================================
+
+' Acesso/Visualização (RF004)
+Prof -- UC_VisPEP
+Pac -- UC_VisPEP
+
+' Criação/Atualização (RF007)
+Prof -- UC_Criar
+
+' Extensões da Criação (RF007, RF008)
+UC_Criar .> UC_Adendo : <<extends>>
+UC_Criar .> UC_Receita : <<extends>>
+UC_Criar .> UC_Atestado : <<extends>>
+
+@enduml

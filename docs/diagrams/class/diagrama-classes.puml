@@ -1,0 +1,337 @@
+@startuml
+
+title Diagrama de Implementação de Classes
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+hide empty members
+!theme mars
+
+'  SEGURANÇA E ACESSO (RBAC)
+class Usuario {
+  + id: Long {pk}
+  + email: String {unique}
+  + senhaHash: String
+  + ativo: boolean
+  + ultimoAcesso: DateTime
+  + dataCriacao: DateTime
+  + perfilId: Long {fk}
+  --
+  + autenticar(senha: String): boolean
+  + alterarSenha(novaSenha: String): void
+  + possuiPermissao(codigoPermissao: String): boolean
+  + inativar(): void
+}
+
+class Role {
+  + id: Long {pk}
+  + codigo: String {unique}
+  + nome: String
+  + descricao: String
+  --
+  + adicionarPermissao(permissao: Permissao): void
+  + removerPermissao(permissao: Permissao): void
+  + listarPermissoes(): List<Permissao>
+}
+
+class Permissao {
+  + id: Long {pk}
+  + codigo: String {unique}
+  + nome: String
+  + descricao: String
+  + modulo: String
+  --
+  + validar(): boolean
+}
+
+'  TABELAS ASSOCIATIVAS
+class UsuarioRole {
+  + usuarioId: Long {fk}
+  + roleId: Long {fk}
+  --
+  + validarAssociacao(): boolean
+}
+
+class RolePermissao {
+  + roleId: Long {fk}
+  + permissaoId: Long {fk}
+  --
+  + validarAssociacao(): boolean
+}
+
+'  RELATÓRIO DE AUDITORIA
+class RelatorioAuditoria {
+  + id: Long {pk}
+  + usuarioId: Long {fk}
+  + acao: String
+  + entidade: String
+  + idEntidade: String
+  + dadosAnteriores: Text
+  + dadosNovos: Text
+  + dataHora: DateTime
+  + ip: String
+  + tipoOperacao: EnumTipoOperacao
+  --
+  + registrar(): void
+  + atualizar(): void
+  + exportarParaPDF(): byte[]
+}
+
+'  PERFIS
+abstract class Perfil {
+  + id: Long {pk}
+  + cpf: String {unique}
+  + nomeCompleto: String
+  + telefone: String
+  + email: String
+  + dataNascimento: Date
+  + endereco: String
+  + ativo: boolean
+  + dataCriacao: DateTime
+  --
+  + validarCPF(): boolean
+  + ativar(): void
+  + inativar(): void
+  + atualizar(): void
+}
+
+class PerfilPaciente extends Perfil {
+  + tipoSanguineo: String
+  + alergias: String
+  + contatoEmergencia: String
+  + telefoneEmergencia: String
+  + planoSaude: String
+  --
+  + adicionarAlergia(alergia: String): void
+  + obterHistoricoAtendimentos(): List<Atendimento>
+}
+
+class PerfilProfissional extends Perfil {
+  + carteiraTrabalho: String {unique}
+  + registro: String {unique}
+  + especialidade: String
+  + subEspecialidade: String
+  + dataAdmissao: Date
+  + unidadeSaudeId: Long {fk}
+  --
+  + validarRegistro(): boolean
+  + obterAgenda(): List<Atendimento>
+  + calcularCargaHoraria(): int
+  + verificarDisponibilidade(data: Date): boolean
+}
+
+class PerfilAdministrativo extends Perfil {
+  + carteiraTrabalho: String {unique}
+  + cargo: String
+  + departamento: String
+  + dataAdmissao: Date
+  + unidadeSaudeId: Long {fk}
+  --
+  + gerarRelatorioGestao(): RelatorioAuditoria
+  + administrarRecursos(): void
+}
+
+'  GESTÃO HOSPITALAR
+class UnidadeSaude {
+  + id: Long {pk}
+  + codigo: String {unique}
+  + nome: String
+  + tipo: EnumTipoUnidade
+  + endereco: String
+  + telefone: String
+  + ativo: boolean
+  --
+  + cadastrarProfissional(profissional: PerfilProfissional): boolean
+  + listarProfissionais(): List<PerfilProfissional>
+  + obterLeitosDisponiveis(): List<Leito>
+  + calcularOcupacao(): double
+}
+
+class Leito {
+  + id: Long {pk}
+  + numero: String {unique}
+  + tipo: EnumTipoLeito
+  + status: EnumStatusLeito
+  + equipamentos: String
+  + unidadeSaudeId: Long {fk}
+  --
+  + ocupar(): boolean
+  + liberar(): void
+  + verificarDisponibilidade(): boolean
+  + adicionarEquipamento(equipamento: String): void
+}
+
+class Internacao {
+  + id: Long {pk}
+  + dataAdmissao: DateTime
+  + dataAlta: DateTime
+  + diagnosticoAdmissao: String
+  + diagnosticoAlta: String
+  + status: EnumStatusInternacao
+  + pacienteId: Long {fk}
+  + leitoId: Long {fk}
+  + profissionalId: Long {fk}
+  --
+  + admitirPaciente(): boolean
+  + darAlta(): void
+  + transferirLeito(novoLeito: Leito): boolean
+  + calcularTempoInternacao(): int
+}
+
+'  ATENDIMENTO (CLASSE ABSTRATA)
+abstract class Atendimento {
+  + id: Long {pk}
+  + dataHora: DateTime
+  + status: EnumStatusAtendimento
+  + observacoes: String
+  + sintomas: String
+  + diagnostico: String
+  + dataCriacao: DateTime
+  + pacienteId: Long {fk}
+  + profissionalId: Long {fk}
+  + unidadeSaudeId: Long {fk}
+  + prontuarioId: Long {fk}
+  --
+  + agendar(): boolean
+  + cancelar(): void
+  + finalizar(): void
+  + adicionarObservacao(observacao: String): void
+  {abstract} + realizar(): boolean
+}
+
+class ConsultaPresencial extends Atendimento {
+  + sala: String
+  + tipoConsulta: EnumTipoConsulta
+  --
+  + realizar(): boolean
+  + gerarEncaminhamento(): DocumentoDigital
+}
+
+class Teleconsulta extends Atendimento {
+  + linkVideo: String
+  + plataforma: String
+  + statusConexao: EnumStatusConexao
+  + gravacao: boolean
+  --
+  + realizar(): boolean
+  + gerarLink(): String
+  + iniciarGravacao(): void
+  + finalizarGravacao(): void
+}
+
+class Exame extends Atendimento {
+  + tipoExame: String
+  + preparo: String
+  + resultado: Text
+  + anexos: String
+  + dataResultado: DateTime
+  + interpretacao: String
+  --
+  + realizar(): boolean
+  + registrarResultado(resultado: String): void
+  + adicionarAnexo(anexo: String): void
+  + interpretarResultado(): String
+}
+
+'  DOCUMENTOS DIGITAIS
+abstract class DocumentoDigital {
+  + id: Long {pk}
+  + titulo: String
+  + conteudo: Text
+  + dataCriacao: DateTime
+  + dataValidade: DateTime
+  + assinado: boolean
+  + hashDigital: String
+  + qrCode: String
+  + prontuarioId: Long {fk}
+  + profissionalId: Long {fk}
+  --
+  + assinar(): boolean
+  + validar(): boolean
+  + exportarParaPDF(): byte[]
+  {abstract} + gerarConteudo(): String
+}
+
+class Receita extends DocumentoDigital {
+  + medicamentos: Text
+  + posologia: Text
+  + instrucoes: Text
+  + vias: Integer
+  --
+  + gerarConteudo(): String
+  + adicionarMedicamento(medicamento: String, posologia: String): void
+  + validarValidade(): boolean
+}
+
+class Atestado extends DocumentoDigital {
+  + tipoAtestado: EnumTipoAtestado
+  + cid: String
+  + diasAfastamento: Integer
+  + restricoes: Text
+  --
+  + gerarConteudo(): String
+  + calcularDataRetorno(): Date
+  + validarCID(): boolean
+}
+
+class Laudo extends DocumentoDigital {
+  + tipoLaudo: String
+  + conclusao: Text
+  + recomendacoes: Text
+  --
+  + gerarConteudo(): String
+  + adicionarConclusao(conclusao: String): void
+  + adicionarRecomendacao(recomendacao: String): void
+}
+
+class Prontuario {
+  + id: Long {pk}
+  + dataCriacao: DateTime
+  + dataAtualizacao: DateTime
+  + historico: Text
+  + pacienteId: Long {fk}
+  --
+  + adicionarDocumento(documento: DocumentoDigital): boolean
+  + obterHistoricoCompleto(): List<DocumentoDigital>
+  + buscarPorPeriodo(dataInicio: Date, dataFim: Date): List<DocumentoDigital>
+  + exportarProntuario(): byte[]
+}
+
+'  RELACIONAMENTOS
+
+' RBAC
+Usuario ||--o{ UsuarioRole
+Role ||--o{ UsuarioRole
+Role ||--o{ RolePermissao
+Permissao ||--o{ RolePermissao
+
+' Segurança-Perfil
+Usuario ||--|| Perfil : possui
+
+' Organizacionais
+UnidadeSaude ||--o{ Leito : possui
+UnidadeSaude ||--o{ PerfilProfissional : emprega
+UnidadeSaude ||--o{ PerfilAdministrativo : emprega
+
+' Atendimento
+PerfilPaciente ||--o{ Atendimento : possui
+PerfilProfissional ||--o{ Atendimento : realiza
+UnidadeSaude ||--o{ Atendimento : local
+
+' Internação
+PerfilPaciente ||--o{ Internacao : possui
+Leito ||--o{ Internacao : aloca
+PerfilProfissional ||--o{ Internacao : responsavel
+
+' Documentação
+PerfilPaciente ||--|| Prontuario : possui
+Atendimento }o--|| Prontuario : atualiza
+Prontuario ||--o{ DocumentoDigital : contém
+
+' Auditoria
+RelatorioAuditoria }|--|| Usuario : registra
+
+@enduml

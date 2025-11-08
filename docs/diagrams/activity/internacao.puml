@@ -1,0 +1,80 @@
+@startuml
+
+header
+Requisitos: RF010 - Gestão de Internações
+end header
+
+title Fluxo de Gestão de Internações
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|prof| Profissional/Admin
+|sys| Sistema
+
+
+|prof|
+start
+:Acessa módulo de **"Internações"**;
+:Acessa lista de espera de pacientes;
+:Seleciona próximo paciente;
+:Acessa gestão de leitos;
+
+|sys|
+:Carrega mapa de leitos (RF010.2);
+
+if (Há leito livre?) then (Não - Paciente em espera)
+   |sys|
+   :Exibe "Nenhum leito disponível";
+   :Atualiza status do paciente para **"Em Espera/Fila"**;
+   |prof|
+   :Recebe notificação;
+   stop
+
+else  (Sim - Prosseguir)
+    |sys|
+   :Exibe Mapa de leitos disponível;
+    |prof|
+    :Seleciona leito e paciente;
+    :Confirma alocação;
+
+    |sys|
+    :Inicia registro da internação;
+    :Registra log de Auditoria;
+    :Muda status para **Ocupado**;
+
+
+
+    |prof|
+    :Médico determina a Alta;
+    :Acessa registro de internação;
+    :Clica em "Liberar Leito";
+
+    |sys|
+    :Finaliza registro da internação;
+
+    if (Leito requer Limpeza?) then (Sim)
+        |sys|
+        :Muda status para **Bloqueado/Limpeza**;
+
+        :Envia notificação para serviços gerais;
+
+        |prof|
+        :Serviços gerais confirma "Limpeza Concluída";
+
+        |sys|
+        :Muda status para **Livre**;
+
+    else (Não - Liberação direta)
+        |sys|
+        :Muda status para **Livre**;
+    endif
+
+endif
+
+stop
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+
+header
+Requisitos: RF008 (Emissão de Receita e Atestado Digital)
+end header
+
+title Fluxo de Emissão de Documentos
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|prof| Profissional de Saúde
+|sys| Sistema
+
+start
+:Prontuário da consulta está sendo preenchido;
+
+|prof|
+:Acessa módulo de Documentos/Prescrições;
+
+if (Qual documento gerar?) then (Receita)
+
+    |prof|
+    :Clica em "Gerar Nova Receita";
+    :Busca e seleciona medicamentos;
+    :Informa posologia, quantidade e via;
+
+else (Atestado)
+
+    |prof|
+    :Clica em "Gerar Atestado Médico";
+    :Preenche dados obrigatórios (dias, CID, finalidade);
+
+end if
+
+|prof|
+:Clica em "Assinar e Enviar";
+
+|sys|
+:Gera documento (PDF/Padrão) com dados;
+:Assina digitalmente o documento (Chave Única);
+
+|sys|
+:Envia documento válido ao Paciente;
+:Notifica envio ao paciente e profissional envolvido;
+:Gera um log de Auditoria;
+|sys|
+:Anexa documento (Receita ou Atestado) ao Prontuário;
+
+stop
+@enduml

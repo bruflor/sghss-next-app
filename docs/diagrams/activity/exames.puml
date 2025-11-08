@@ -1,0 +1,70 @@
+@startuml
+---
+description:
+author: Bruna Flôr
+release:
+license:
+version: 1.0.0
+---
+
+header
+Requisitos: RF003 agendamento de exames e RF005 resultados de exames
+end header
+
+title Fluxo de Agendamento de Exames e consulta dos resultados
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|user| Paciente/Profissional/Admin
+|#efefef|sys| Sistema
+|lab| Laboratório/Operador
+
+
+|user|
+start
+:Acessa o sistema;
+:Acessa módulo de exame;
+:Solicita agendamento do exame;
+
+|sys|
+:Verifica agenda do equipamento/unidade;
+:Apresenta horários disponíveis;
+
+|user|
+:Escolhe data e horário;
+
+|sys|
+:Confirma seleção enviada;
+
+if (Agenda disponível?) then (Sim)
+    :Bloqueia vaga;
+    :Cria agendamento (status: **Agendado**);
+    :Envia notificação com confirmação e instruções (RF017);
+
+    |user|
+    :Paciente realiza o Exame;
+
+    |lab|
+    :Acessa requerimento;
+    :Lança o resultado do exame (dados e laudo);
+
+    |sys|
+    :Armazena resultado no prontuário do paciente;
+    :Altera Status para **"Resultado Disponível"**;
+    :Notifica Profissional Solicitante e Paciente;
+    |user|
+    :Paciente/Profissional visualiza o Resultado;
+else (Não)
+    |sys|
+    :Exibe "Não há vagas disponíveis";
+endif
+
+stop
+
+@enduml
+

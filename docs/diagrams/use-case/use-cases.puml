@@ -1,0 +1,70 @@
+@startuml Casos_de_Uso_Global_Final
+
+title Diagrama de Casos de Uso Global - Visão Final Agrupada
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor #0368A7 "Profissional de Saúde" as Prof
+actor #5A96CD "Administrativo/Recepcionista" as Admin
+actor #e4ddc2 "Operador de Laboratório" as Lab
+
+Prof <|-- Admin : herda acesso
+Lab <|-- Admin : herda acesso
+
+' Ator à direita
+actor #E69D07 Paciente as Pac
+
+rectangle "Sistema de Gestão de Saúde" {
+
+    usecase "Login e Gestão de Conta (UC-010)" as UC_Login
+
+    package "1. Agendamento e Pessoas" {
+        usecase "Agendar e Cancelar (UC-020)" as UC_Ag
+    }
+
+    package "2. Atendimento Clínico" {
+        usecase "Realizar Atendimento/Teleconsulta (UC-030)" as UC_Tele
+        usecase "Gerenciar Prontuário e Docs (UC-040)" as UC_ProntDocs
+    }
+
+    package "3. Histórico, Exames e Gestão" {
+        usecase "Gerenciar Resultados de Exames (UC-050)" as UC_Exames
+        usecase "Gerenciar/Alocar Leitos (UC-060)" as UC_Leitos
+    }
+}
+
+
+' Login (UC-010)
+Prof -- UC_Login
+Admin -- UC_Login
+Lab -- UC_Login
+
+' Agendamento (UC-020)
+Prof -- UC_Ag
+Admin -- UC_Ag
+
+' Atendimento (UC-030, UC-040)
+Prof -- UC_Tele
+Prof -- UC_ProntDocs
+
+' Histórico/Exames/Gestão (UC-050, UC-060)
+Prof -- UC_Exames
+Admin -- UC_Leitos
+Lab -- UC_Exames
+
+
+UC_Login -- Pac
+UC_Ag -- Pac
+UC_Tele -- Pac
+UC_ProntDocs -- Pac
+UC_Exames -- Pac
+
+@enduml

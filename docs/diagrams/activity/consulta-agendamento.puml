@@ -1,0 +1,53 @@
+@startuml
+---
+description:
+author: Bruna Flôr
+release:
+license:
+version: 1.0.0
+---
+
+header
+Requisitos: RF002 (Agendamento de consultas)
+end header
+
+title Fluxo de Agendamento de Consultas
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|user| Usuário
+|#efefef|sys| Sistema
+
+
+|user|
+start
+: Acessa sistema;
+: Acessa módulo de consulta;
+
+|user|
+:Nova consulta;
+: Filtra por profissional/especialidade;
+
+|sys|
+: Verifica agenda disponível;
+
+|user|
+: Escolhe data/horário;
+: Confirma agendamento;
+
+|sys|
+: Bloqueia horário na agenda;
+
+|sys|
+: Envia notificação para o profissional\ne o paciente envolvidos;
+
+|user|
+: Recebe confirmação;
+
+stop
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+
+header
+Requisitos Relacionados: RF010
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title Caso de Uso: UC-100 - Gerenciar/Alocar Leitos
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #5A96CD "Administrativo/Recepcionista" as Admin
+actor #0368A7 "Profissional de Saúde" as Prof
+
+rectangle "Módulo de Internações" {
+    usecase "Visualizar Mapa de Leitos (RF010.2)" as UC_Mapa
+    usecase "Alocar Paciente (RF010.1)" as UC_Alocar
+    usecase "Liberar Leito (RF010.3)" as UC_Liberar
+}
+
+Admin -- UC_Mapa
+Admin -- UC_Alocar
+Admin -- UC_Liberar
+
+Prof -- UC_Mapa
+Prof -- UC_Liberar
+
+UC_Alocar .> UC_Mapa : <<include>>
+@enduml

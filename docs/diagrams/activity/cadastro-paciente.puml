@@ -1,0 +1,57 @@
+@startuml
+
+header
+Requisitos: RF001 (Cadastro de Pacientes) e RF011 (Cadastro de Profissional)
+end header
+
+title Fluxo de Cadastro e Atualização de Usuários/Pacientes
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|user| Usuário
+|sys|Sistema
+
+|user|
+start
+:Acessa o sistema;
+:Acessa a página de cadastro;
+note
+Profissionais de saúde podem
+cadastrar tipo paciente;
+Somente administradores podem
+cadastrar ou editar outro
+profissional de saúde
+end note
+
+if (Já possui conta?) then (Sim - Login)
+
+:Acessa conta existente (Login);
+:Inicia o fluxo de atualização;
+else (Não - Criar)
+|sys|
+:Apresenta formulário vazio;
+endif
+
+|user|
+repeat :Entra com os dados;
+:Submete formulário;
+
+|sys|
+:Recebe dados do formulário;
+:Valida campos obrigatórios;
+backward: Exibe mensagem de erro;
+repeat while (Dados válidos?) is (Não) not (Sim)
+
+:Executa a ação solicitada;
+note :Criar ou atualizar;
+:Registra log de sucesso para auditoria;
+:Notifica ação realizada com sucesso;
+:Redireciona usuário a página inicial;
+stop
+
+@enduml

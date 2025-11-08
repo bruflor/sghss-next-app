@@ -1,0 +1,90 @@
+@startuml Fluxo_Atendimento_Geral_RF006_RF007
+
+header
+Requisitos: RF006 (Teleconsulta) e RF007 (Criação de Prontuário)
+end header
+
+title Fluxo de Atendimento (Presencial e Teleconsulta) e Prontuário
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|patient| Paciente
+|prof| Profissional de Saúde
+|sys| Sistema
+
+|prof|
+start
+:Acessa agenda e consulta agendada;
+
+if (Tipo de consulta?) then (Teleconsulta)
+  :Inicia/Prepara ambiente de Teleconsulta;
+
+  |patient|
+  :Acessa sistema;
+  :Visualiza notificação de consulta iminente;
+  :Solicita para entrar na sala;
+
+  |sys|
+  :Envia notificação de entrada pendente;
+
+  |prof|
+  :Aceita entrada de paciente na teleconsulta;
+
+  |sys|
+  :Verifica microfone/câmera e estabelece conexão segura;
+
+else (Presencial)
+  :Confirma chegada do paciente;
+
+  |sys|
+  :Atualiza status do paciente no painel de atendimento;
+end if
+
+|sys|
+:Altera status da consulta para **"Em Andamento"**;
+
+|prof|
+:Realização do atendimento (Presencial ou Teleconsulta);
+
+note
+Ação conjunta, mas liderada pelo profissional;
+end note
+
+:Clica em "Encerrar Atendimento";
+
+|sys|
+if (É Teleconsulta?) then (Sim)
+  :Encerra conexão de vídeo para ambos;
+end if
+:Altera status para **"Finalizada/Aguardando Prontuário"**;
+
+
+|prof|
+:Redirecionado para tela de **Prontuário**;
+:Preenche campos obrigatórios (Diagnóstico, Conduta, requisição de exames, etc.);
+:Anexa documentos (se necessário);
+:Clica em "Finalizar/Salvar Prontuário";
+
+|sys|
+:Valida dados do prontuário;
+:Registra prontuário no histórico da consulta;
+:Registra log de auditoria;
+:Altera status da consulta para **"Concluído"**;
+
+|prof|
+if (Necessidade de atualização posterior?) then (Sim)
+  :Acessa Prontuário;
+  :Adiciona nota de atualização;
+
+  |sys|
+  :Anexa nota ao histórico, mantendo o original intacto;
+  :Registra a edição no log de auditoria;
+end if
+
+stop
+@enduml

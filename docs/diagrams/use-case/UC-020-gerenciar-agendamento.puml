@@ -1,0 +1,37 @@
+@startuml
+
+header
+Requisitos Relacionados: RF002, RF003, RF009
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title Caso de Uso: UC-020 - Gerenciar Agendamento
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #E69D07 Paciente as Pac
+actor #0368A7 "Profissional de Saúde" as Prof
+actor #5A96CD "Administrativo/Recepcionista" as Admin
+
+rectangle "Módulo de Agendamento" {
+    usecase "Criar/Atualizar Agendamento (RF002/RF003)" as UC_Criar
+    usecase "Cancelar Agendamento" as UC_Cancel
+    usecase "Gerenciar Agendas (RF009)" as UC_GerAg
+}
+
+Pac -- UC_Criar
+Pac -- UC_Cancel
+
+Admin -- UC_Criar
+Admin -- UC_Cancel
+Admin -- UC_GerAg
+
+Prof -- UC_GerAg
+
+UC_Criar .> UC_GerAg : <<include>>
+@enduml

@@ -1,0 +1,72 @@
+@startuml
+---
+description:
+author: Bruna Flôr
+release:
+license:
+version: 1.0.0
+---
+
+header
+Requisitos: RF002 (Cancelamento de consultas) e RF004 (Visualização de histórico)
+end header
+
+title Fluxo de Agendamento de Consultas e Visualização de histórico
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+!theme mars
+
+|user| Usuário
+|#efefef|sys| Sistema
+
+
+|user|
+start
+: Acessa sistema;
+: Acessa módulo de consulta;
+
+: Histórico de consultas;
+
+fork
+    : Consultas finalizadas;
+    : Seleciona consulta;
+    : Visualiza detalhes (consulta e prontuário);
+
+  fork again
+
+    : Consultas pendentes;
+    : Seleciona consulta;
+    if (Ação é Cancelar?) then (Não - Visualizar)
+                                  |user|
+                                  : Visualiza detalhes (consulta);
+    else (Sim - Cancelamento)
+    |user|
+    : Solicita cancelamento;
+    : Digita motivo do cancelamento;
+    : Submete pedido;
+    |sys|
+    : Processa cancelamento;
+    : Libera horário na agenda (RF009);
+    : Envia notificação para o profissional\ne o paciente envolvidos;
+    |user|
+    : Recebe confirmação;
+    stop
+
+    endif
+  end fork
+
+
+
+
+|sys|
+:Processa pedido;
+|user|
+:Acessa detalhes;
+stop
+
+@enduml
+

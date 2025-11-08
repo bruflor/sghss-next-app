@@ -1,0 +1,32 @@
+@startuml
+
+header
+Requisitos Relacionados: RF005
+end header
+
+caption
+Desenvolvido por
+Bruna Flôr - RU: 4596056
+end caption
+
+title Caso de Uso: UC-080 - Gerenciar Resultados de Exames
+
+left to right direction
+skinparam actorStyle awesome
+
+actor #E69D07 Paciente as Pac
+actor #0368A7 "Profissional de Saúde" as Prof
+actor #e4ddc2 "Operador de Laboratório" as Lab
+
+rectangle "Módulo de Laboratório e Exames" {
+    usecase "Registrar Resultado (UC-080.1)" as UC_Reg
+    usecase "Visualizar Resultados (UC-080.2)" as UC_Vis
+}
+
+Lab -- UC_Reg
+
+Pac -- UC_Vis
+Prof -- UC_Vis
+
+UC_Reg .> UC_Vis : <<include>>
+@enduml

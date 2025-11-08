@@ -35,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 } else if (user.email === 'medico@hospital.com' ||
                     user.email === 'enfermeiro@hospital.com' ||
                     user.email === 'administrativo@hospital.com') {
-                    role = 'colaborador';
+                    role = 'profissional';
                     permissoes = ['atendimento:read', 'prontuario:read', 'agenda:view'];
                 }
 
@@ -98,8 +98,8 @@ export function hasRole(session: any, role: string): boolean {
     return session?.user?.role === role;
 }
 
-export function isColaborador(session: any): boolean {
-    return session?.user?.role === 'colaborador';
+export function isprofissional(session: any): boolean {
+    return session?.user?.role === 'profissional';
 }
 
 export function isAdmin(session: any): boolean {

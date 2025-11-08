@@ -9,11 +9,11 @@ export async function middleware(request: any) {
     // Definir permissões por rota
     const routePermissions: Record<string, string[]> = {
         '/dashboard/admin': ['admin'],
-        '/dashboard/colaborador': ['colaborador', 'admin'],
+        '/dashboard/profissional': ['profissional', 'admin'],
         '/dashboard/paciente': ['paciente', 'admin'],
         '/dashboard/usuarios': ['admin'],
         '/dashboard/unidades': ['admin'],
-        '/dashboard/leitos': ['admin', 'colaborador'],
+        '/dashboard/leitos': ['admin', 'profissional'],
     };
 
     // Verificar se a rota requer permissão específica

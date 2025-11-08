@@ -14,7 +14,7 @@ export default async function DashboardPage() {
             redirect('/dashboard/admin');
         case 'paciente':
             redirect('/dashboard/paciente');
-        case 'colaborador':
+        case 'profissional':
             redirect('/dashboard/profissional');
         default:
             redirect('/dashboard/paciente'); // fallback

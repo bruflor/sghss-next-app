@@ -130,8 +130,8 @@ export default async function PacienteDashboard() {
                                     </Link>
                                 </div>
                                 <div className="col-md-3">
-                                    <Link href="/dashboard/paciente/teleconsulta" className="btn btn-warning w-100 py-3" data-cy="btn-teleconsulta">
-                                        Teleconsulta
+                                    <Link href="/dashboard/paciente/perfil" className="btn btn-warning w-100 py-3" data-cy="btn-meus-dados">
+                                        Meus Dados / Perfil
                                     </Link>
                                 </div>
                             </div>

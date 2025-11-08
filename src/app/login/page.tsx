@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -70,6 +71,12 @@ export default function LoginPage() {
                                     Entrar
                                 </button>
                             </form>
+
+                            <div className="mt-3 text-center">
+                                <small className="text-muted">
+                                    Primeiro acesso? <Link href="/cadastro-paciente" data-cy="link-primeiro-acesso">Cadastre-se</Link>
+                                </small>
+                            </div>
 
                             <div className="mt-4">
                                 <h6>Usuários para teste:</h6>

@@ -1,6 +1,9 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface PageProps {
     params: {
@@ -8,14 +11,12 @@ interface PageProps {
     };
 }
 
-export default async function EditarPacientePage({ params }: PageProps) {
-    const session = await auth();
+export default function EditarPacientePage({ params }: PageProps) {
+    const router = useRouter();
+    const { data: session } = useSession();
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState('');
 
-    if (!session || session.user?.role !== 'profissional') {
-        redirect('/login');
-    }
-
-    // Mock data - em uma aplicação real, buscaria do banco pelo ID
     const pacienteData = {
         id: parseInt(params.id),
         nome: 'Carlos Silva',
@@ -34,9 +35,33 @@ export default async function EditarPacientePage({ params }: PageProps) {
         status: 'Ativo'
     };
 
+    useEffect(() => {
+        if (!session || session.user?.role !== 'profissional') {
+            router.push('/login');
+        }
+    }, [session, router]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setSuccess(false);
+
+        try {
+            setSuccess(true);
+            setTimeout(() => {
+                setSuccess(false);
+            }, 3000);
+        } catch (error) {
+            setError('Erro ao atualizar dados. Tente novamente.');
+        }
+    };
+
+    if (!session || session.user?.role !== 'profissional') {
+        return null;
+    }
+
     return (
         <div className="container-fluid py-4" data-cy="editar-paciente-page">
-            {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 className="h3 mb-1 text-primary" data-cy="page-title">Editar Paciente</h1>
@@ -61,8 +86,19 @@ export default async function EditarPacientePage({ params }: PageProps) {
                             <h5 className="mb-0" data-cy="form-title">Dados do Paciente - ID: {pacienteData.id}</h5>
                         </div>
                         <div className="card-body">
-                            <form data-cy="editar-paciente-form">
-                                {/* Dados Pessoais */}
+                            {error && (
+                                <div className="alert alert-danger" data-cy="erro-edicao">
+                                    {error}
+                                </div>
+                            )}
+
+                            {success && (
+                                <div className="alert alert-success" data-cy="mensagem-sucesso">
+                                    Dados do paciente {pacienteData.nome} atualizados com sucesso.
+                                </div>
+                            )}
+
+                            <form onSubmit={handleSubmit} data-cy="editar-paciente-form">
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label" data-cy="label-nome">Nome Completo *</label>
@@ -114,7 +150,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     </div>
                                 </div>
 
-                                {/* Contato */}
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label" data-cy="label-telefone">Telefone *</label>
@@ -137,7 +172,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     </div>
                                 </div>
 
-                                {/* Endereço */}
                                 <div className="mb-3">
                                     <label className="form-label" data-cy="label-endereco">Endereço Completo</label>
                                     <input
@@ -148,7 +182,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     />
                                 </div>
 
-                                {/* Dados de Saúde */}
                                 <div className="row mb-3">
                                     <div className="col-md-4">
                                         <label className="form-label" data-cy="label-tipo-sanguineo">Tipo Sanguíneo</label>
@@ -176,7 +209,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     </div>
                                 </div>
 
-                                {/* Contato de Emergência */}
                                 <div className="mb-3">
                                     <label className="form-label" data-cy="label-contato-emergencia">Contato de Emergência</label>
                                     <input
@@ -188,7 +220,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     />
                                 </div>
 
-                                {/* Convênio */}
                                 <div className="row mb-4">
                                     <div className="col-md-6">
                                         <label className="form-label" data-cy="label-convenio">Convênio Médico</label>
@@ -210,7 +241,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     </div>
                                 </div>
 
-                                {/* Observações */}
                                 <div className="mb-4">
                                     <label className="form-label" data-cy="label-observacoes">Observações</label>
                                     <textarea
@@ -221,7 +251,6 @@ export default async function EditarPacientePage({ params }: PageProps) {
                                     ></textarea>
                                 </div>
 
-                                {/* Botões */}
                                 <div className="d-flex gap-2 justify-content-end">
                                     <Link href="/dashboard/profissional/pacientes" className="btn btn-secondary" data-cy="btn-cancelar-edicao">
                                         Cancelar

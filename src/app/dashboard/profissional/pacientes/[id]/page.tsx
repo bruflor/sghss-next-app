@@ -18,7 +18,7 @@ export default function EditarPacientePage({ params }: PageProps) {
     const [error, setError] = useState('');
 
     const pacienteData = {
-        id: parseInt(params.id),
+        id: params.id,
         nome: 'Carlos Silva',
         cpf: '123.456.789-00',
         dataNascimento: '1985-03-15',
@@ -83,7 +83,7 @@ export default function EditarPacientePage({ params }: PageProps) {
                 <div className="col-lg-10">
                     <div className="card shadow" data-cy="form-editar-paciente">
                         <div className="card-header bg-primary text-white">
-                            <h5 className="mb-0" data-cy="form-title">Dados do Paciente - ID: {pacienteData.id}</h5>
+                            <h5 className="mb-0" data-cy="form-title">Dados do Paciente - ID: {pacienteData.id ??1}</h5>
                         </div>
                         <div className="card-body">
                             {error && (

@@ -14,7 +14,7 @@ end caption
 !theme mars
 
 |user| Usuário
-|sys|Sistema
+|#efefef|sys| Sistema
 
 |user|
 start

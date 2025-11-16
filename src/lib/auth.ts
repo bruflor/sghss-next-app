@@ -2,7 +2,6 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { mockUsers } from "@/mocks/mockUsers";
 
-// ✅ CONFIGURAÇÃO CORRETA com secret
 export const { handlers, auth, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
 

@@ -17,6 +17,7 @@ export default function EditarPacientePage({ params }: PageProps) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
+    //Mock da requisição que retornaria o paciente de acordo com o id pesquisado
     const pacienteData = {
         id: params.id,
         nome: 'Carlos Silva',
